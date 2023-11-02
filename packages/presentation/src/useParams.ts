@@ -133,11 +133,14 @@ export function useParams({ previewUrl }: { previewUrl: string }): {
     }, 50)
   }, [routerNavigate])
 
-  const previewRef = useRef(params.preview)
+  const paramsRef = useRef(params)
 
   useEffect(() => {
-    const previousPreview = previewRef.current
-    previewRef.current = params.preview
+    const previousPreview = paramsRef.current.preview
+
+    const previewChanged = params.preview !== previousPreview
+    const documentChanged = params.id !== paramsRef.current.id
+    paramsRef.current = params
 
     const type = params.type
     const path = params.id
@@ -146,19 +149,23 @@ export function useParams({ previewUrl }: { previewUrl: string }): {
         )
       : undefined
 
-    const searchParams = {
-      preview: params.preview,
-      inspect: params.inspect,
-      rev: params.rev,
-      since: params.since,
-      template: params.template,
-      view: params.view,
-      // assist
-      pathKey: params.pathKey,
-      instruction: params.instruction,
-      // comments
-      comment: params.comment,
-    } satisfies PresentationParams as Record<string, string>
+    const searchParams = (documentChanged || previewChanged
+      ? {
+          preview: params.preview,
+        }
+      : {
+          preview: params.preview,
+          inspect: params.inspect,
+          rev: params.rev,
+          since: params.since,
+          template: params.template,
+          view: params.view,
+          // assist
+          pathKey: params.pathKey,
+          instruction: params.instruction,
+          // comments
+          comment: params.comment,
+        }) satisfies PresentationParams as Record<string, string>
 
     const replace = params.preview === previousPreview
     navigate({ type, path }, { replace, searchParams })

@@ -173,6 +173,8 @@ export default function PresentationTool(props: {
           })
         } else if (type === 'overlay/navigate') {
           setParams({
+            // @todo collapse document on navigate?
+            id: undefined,
             preview: data.url,
           })
         } else if (type === 'overlay/toggle') {
