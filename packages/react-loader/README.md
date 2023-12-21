@@ -85,6 +85,9 @@ interface Product {}
 const query = `*[_type == "product" && slug.current == $slug][0]`
 
 export const loader: LoaderFunction = async ({ params }) => {
+  //If you don't add slug as the key in the params object, you keep getting the error Unexpected JSON value.
+  const {data} = loadQuery(query, slug: params);
+  
   return json({
     params,
     initial: await loadQuery<Product>(query, params),
